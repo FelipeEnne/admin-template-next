@@ -3,5 +3,10 @@ interface ContentProps {
 }
 
 export default function Content({ children }: ContentProps) {
-  return <div className={`flex flex-col mt-7`}>{children}</div>;
+  return (
+    <div className={`flex flex-col mt-7`}>
+      {children}
+      <h3>Content</h3>
+    </div>
+  );
 }

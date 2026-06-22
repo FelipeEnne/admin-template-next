@@ -31,6 +31,10 @@ public/         # Static assets
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Troubleshooting
+
+Common issues (App Router conventions, `src/pages` errors, multiple dev servers, `Link` usage) are documented in [docs/lessons-learned.md](docs/lessons-learned.md).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

@@ -9,7 +9,6 @@ interface HeaderProps {
 export default function Header({ title, subtitle }: HeaderProps) {
   return (
     <div>
-      <SideMenu />
       <main>
         <Title title={title} subtitle={subtitle} />
       </main>
