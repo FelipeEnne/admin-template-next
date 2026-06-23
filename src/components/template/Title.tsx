@@ -1,5 +1,3 @@
-import SideMenu from "./SideMenu";
-
 interface TitleProps {
   title: string;
   subtitle: string;
