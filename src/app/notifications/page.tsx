@@ -1,6 +1,11 @@
+"use client";
+
 import Layout from "@/components/template/Layout";
+import useAppData from "@/data/hook/useAppData";
 
 export default function Notifications() {
+  const ctx = useAppData();
+
   return (
     <Layout
       title="Notifications"
@@ -12,6 +17,7 @@ export default function Notifications() {
         view your notifications.
       </p>
       <p>You can also manage your notifications settings.</p>
+      <p>{ctx.name}</p>
     </Layout>
   );
 }
