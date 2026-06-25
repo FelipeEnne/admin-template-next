@@ -31,7 +31,7 @@ export default function ItemMenu({
   return (
     <li
       onClick={onClick}
-      className={`hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md p-2 cursor-pointer`}
+      className={`hover:bg-gray-300 dark:hover:bg-gray-700 p-2 cursor-pointer`}
     >
       {url ? <Link href={url}>{renderLink()}</Link> : renderLink()}
     </li>

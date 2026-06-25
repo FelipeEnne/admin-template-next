@@ -6,9 +6,11 @@ import Logo from "./Logo";
 
 export default function SideMenu() {
   return (
-    <aside className={`flex flex-col`}>
+    <aside
+      className={`flex flex-col bg-gray-200 text-gray-700 dark:bg-gray-950 dark:text-gray-200`}
+    >
       <div
-        className={`h-20 w-20 bg-linear-to-r from-indigo-500 to-purple-500 flex flex-col items-center justify-center`}
+        className={`h-20 bg-linear-to-r from-indigo-500 to-purple-500 flex flex-col items-center justify-center`}
       >
         <Logo />
       </div>
