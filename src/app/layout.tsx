@@ -30,7 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <AppProvider name="Test context api">{children}</AppProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

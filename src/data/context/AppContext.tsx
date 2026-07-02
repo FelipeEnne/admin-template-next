@@ -1,23 +1,35 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-interface AppContextData {
-  name: string;
+type Theme = "" | "dark";
+
+interface AppContextProps {
+  thema: Theme;
+  changeTheme: () => void;
 }
 
 interface AppProviderProps {
   children: React.ReactNode;
-  name: string;
 }
 
-const appContext = createContext<AppContextData>({ name: "" });
+const appContext = createContext<AppContextProps>({
+  thema: "dark",
+  changeTheme: () => {},
+});
 
-export function AppProvider({ children, name }: AppProviderProps) {
+export function AppProvider({ children }: AppProviderProps) {
+  const [currentTheme, setCurrentTheme] = useState<Theme>("dark");
+
+  function changeTheme() {
+    setCurrentTheme(currentTheme === "dark" ? "" : "dark");
+  }
+
   return (
     <appContext.Provider
       value={{
-        name,
+        thema: currentTheme,
+        changeTheme,
       }}
     >
       {children}
