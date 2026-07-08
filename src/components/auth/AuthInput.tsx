@@ -16,13 +16,18 @@ export default function AuthInput({
   valueChange,
 }: AuthInputProps) {
   return notRender ? null : (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 mt-4">
       <label>{label}</label>
       <input
         type={type || "text"}
         value={value}
         onChange={(e) => valueChange?.(e.target.value)}
         required={required}
+        className={`
+          w-full px-4 py-3 rounded-lg bg-gray-200 mt-2
+          border focus:outline-none  text-black
+          focus:border-indigo-500 focus:ring-indigo-500 focus:ring-1 focus:bg-white
+         `}
       />
     </div>
   );
