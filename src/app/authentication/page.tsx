@@ -2,10 +2,13 @@
 
 import AuthInput from "@/components/auth/AuthInput";
 import { IconGoogle, IconWarning } from "@/components/icons";
+import useAuth from "@/data/hook/useAuth";
 import Image from "next/image";
 import { useState } from "react";
 
 export default function Authentication() {
+  const { user, loginGoogle } = useAuth();
+
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -102,7 +105,7 @@ export default function Authentication() {
         <hr className="my-6 border-gray-300 w-full" />
 
         <button
-          onClick={() => {}}
+          onClick={loginGoogle}
           className={`
             w-full px-4 py-3 rounded-lg mb-6 cursor-pointer 
             inline-flex items-center justify-center gap-2
