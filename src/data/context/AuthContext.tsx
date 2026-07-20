@@ -1,8 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import firebase from "@/firebase/config";
+import { auth } from "@/firebase/config";
 import User from "@/model/User";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  type User as FirebaseUser,
+} from "firebase/auth";
 import { createContext, useState } from "react";
 
 interface AuthContextProps {
@@ -15,14 +20,14 @@ const AuthContext = createContext<AuthContextProps>({
   loginGoogle: async () => {},
 });
 
-async function normalizeUser(userFirebase: firebase.User): Promise<User> {
+async function normalizeUser(userFirebase: FirebaseUser): Promise<User> {
   const token = await userFirebase.getIdToken();
   return {
     uid: userFirebase.uid,
     name: userFirebase.displayName || "",
     email: userFirebase.email || "",
     token,
-    provider: userFirebase.providerData[0].providerId || "",
+    provider: userFirebase.providerData[0]?.providerId || "",
     imageUrl: userFirebase.photoURL || "",
   };
 }
@@ -32,8 +37,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   async function loginGoogle() {
-    console.log("loginGoogle");
-    router.push("/");
+    const provider = new GoogleAuthProvider();
+    const resp = await signInWithPopup(auth, provider);
+    if (resp.user?.emailVerified) {
+      const user = await normalizeUser(resp.user);
+      setUser(user);
+      await auth.currentUser?.getIdToken(true);
+      router.push("/");
+    } else {
+      throw new Error("Google login failed");
+    }
   }
 
   return (
