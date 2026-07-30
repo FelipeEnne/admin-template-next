@@ -9,17 +9,20 @@ import {
   signInWithPopup,
   type User as FirebaseUser,
   onIdTokenChanged,
+  signOut,
 } from "firebase/auth";
 import { createContext, useState, useEffect } from "react";
 
 interface AuthContextProps {
   user: User | null;
   loginGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   loginGoogle: async () => {},
+  logout: async () => {},
 });
 
 async function normalizeUser(userFirebase: FirebaseUser): Promise<User> {
@@ -63,19 +66,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function loginGoogle() {
-    const provider = new GoogleAuthProvider();
-    const resp = await signInWithPopup(auth, provider);
-    await configSession(resp.user);
-    router.push("/");
+    try {
+      setLoading(true);
+      const provider = new GoogleAuthProvider();
+      const resp = await signInWithPopup(auth, provider);
+      await configSession(resp.user);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function logout() {
+    try {
+      setLoading(true);
+      await signOut(auth);
+      await configSession(null);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
-    const cancel = onIdTokenChanged(auth, configSession);
-    return () => cancel();
+    if (Cookies.get("admin-template-auth")) {
+      const cancel = onIdTokenChanged(auth, configSession);
+      return () => cancel();
+    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle }}>
+    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

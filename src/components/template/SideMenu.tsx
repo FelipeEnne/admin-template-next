@@ -3,8 +3,11 @@
 import { IconAdjustments, IconBell, IconHome, IconLogout } from "../icons";
 import ItemMenu from "./ItemMenu";
 import Logo from "./Logo";
+import useAuth from "@/data/hook/useAuth";
 
 export default function SideMenu() {
+  const { logout } = useAuth();
+
   return (
     <aside
       className={`flex flex-col bg-gray-200 text-gray-700 dark:bg-gray-950 dark:text-gray-200`}
@@ -29,7 +32,7 @@ export default function SideMenu() {
       </ul>
       <ul>
         <ItemMenu
-          onClick={() => console.log("Logout")}
+          onClick={() => logout()}
           className={`text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300`}
           text="Logout"
           icon={<IconLogout />}
