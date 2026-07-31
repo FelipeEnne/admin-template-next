@@ -94,8 +94,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    const cancel = onIdTokenChanged(auth, configSession);
-    return () => cancel();
+    if (Cookies.get("admin-template-auth")) {
+      const cancel = onIdTokenChanged(auth, configSession);
+      return () => cancel();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   return (
