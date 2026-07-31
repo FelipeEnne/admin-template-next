@@ -15,12 +15,14 @@ import { createContext, useState, useEffect } from "react";
 
 interface AuthContextProps {
   user: User | null;
+  loading: boolean;
   loginGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
+  loading: false,
   loginGoogle: async () => {},
   logout: async () => {},
 });
@@ -92,14 +94,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    if (Cookies.get("admin-template-auth")) {
-      const cancel = onIdTokenChanged(auth, configSession);
-      return () => cancel();
-    }
+    const cancel = onIdTokenChanged(auth, configSession);
+    return () => cancel();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loginGoogle, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
