@@ -80,7 +80,23 @@ turbopack: {
 4. Testar rotas no browser ou com `Invoke-WebRequest`
 5. Reiniciar `npm run dev` após mudanças em pastas de rota
 
+## 8. Auth Firebase (client-only)
+
+Não há `middleware.ts`. A proteção é só no client:
+
+1. `AuthProvider` no root layout envolve o app
+2. Login Google (`signInWithPopup`) em `AuthContext` grava o cookie `admin-template-auth` (flag booleana, 7 dias — **não** o JWT)
+3. Páginas admin usam `Layout` → `ForceAuth`; sem usuário, redireciona para `/authentication`
+4. `/authentication` **não** usa `Layout` (rota pública)
+5. Restauração de sessão: se o cookie existir, `onIdTokenChanged` reativa o usuário
+
+Consumir auth via `useAuth` (`@/data/hook/useAuth`). Firebase só em `AuthContext` e `src/firebase/config.js`.
+
+Env: `NEXT_PUBLIC_FIREBASE_*`. O código usa a typo `NEXT_PUBLIC_FIREBASE_PORJECT_ID` — manter alinhado ao `.env`.
+
+O formulário email/senha na tela de login ainda não está ligado ao Firebase; só o Google está wired.
+
 ## Referências no projeto
 
-- Regras Cursor: `.cursor/rules/project-structure.mdc`, `react-next.mdc`, `dev-workflow.mdc`
+- Regras Cursor: `.cursor/rules/project-structure.mdc`, `react-next.mdc`, `dev-workflow.mdc`, `auth.mdc`, `styling.mdc`
 - Docs Next.js 16: `node_modules/next/dist/docs/`

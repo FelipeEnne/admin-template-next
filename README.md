@@ -22,18 +22,32 @@ You can start editing the page by modifying `src/app/page.tsx`. The page auto-up
 
 ```
 src/
-  app/          # App Router (routes, layouts)
-  components/   # Reusable components
-  lib/          # Utilities and helpers
-  styles/       # Global CSS and theme tokens
-public/         # Static assets
+  app/           # App Router (routes, layouts)
+  components/    # auth/, template/, icons/
+  data/          # context/ + hook/ (Auth, theme)
+  firebase/      # Firebase client SDK config
+  model/         # Domain types (User)
+  styles/        # Global CSS and theme tokens
+public/          # Static assets
 ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Firebase / Auth
+
+Copy Firebase web config into a `.env` (or `.env.local`) with:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PORJECT_ID=
+```
+
+Note the typo `PORJECT_ID` — it matches `src/firebase/config.js` and must stay in sync with the env file.
+
+Auth is **client-only** (Google sign-in + cookie flag + `ForceAuth` in `Layout`). There is no Next.js middleware. See [docs/lessons-learned.md](docs/lessons-learned.md) for the full flow.
 
 ## Troubleshooting
 
-Common issues (App Router conventions, `src/pages` errors, multiple dev servers, `Link` usage) are documented in [docs/lessons-learned.md](docs/lessons-learned.md).
+Common issues (App Router conventions, `src/pages` errors, multiple dev servers, `Link` usage, Firebase auth) are documented in [docs/lessons-learned.md](docs/lessons-learned.md).
 
 ## Learn More
 
@@ -42,7 +56,7 @@ To learn more about Next.js, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You can check out the [Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
