@@ -1,0 +1,33 @@
+---
+description: Autenticação Firebase client-only e proteção de rotas
+alwaysApply: true
+---
+
+# Auth
+
+## Providers
+
+Em `src/app/layout.tsx`, `AuthProvider` envolve `AppProvider`. O root layout permanece Server Component; os providers são Client Components.
+
+## Sessão
+
+- Lógica em `src/data/context/AuthContext.tsx`
+- Login real: Google via `signInWithPopup`
+- Cookie `admin-template-auth` é só flag booleana (7 dias), **não** o JWT
+- Se o cookie existir, restaura sessão com `onIdTokenChanged`
+- Formulário email/senha na UI de `/authentication` ainda **não** está ligado ao Firebase
+
+## Proteção de rotas
+
+- **Não há middleware** — proteção só no client
+- `ForceAuth` (`src/components/auth/ForceAuth.tsx`) dentro de `Layout` redireciona para `/authentication` se não houver usuário
+- Páginas admin usam `Layout`; `/authentication` **não** usa `Layout`
+
+## Consumo
+
+- Use `useAuth` de `@/data/hook/useAuth` — não importe Firebase ad hoc na UI
+- Firebase client só em `AuthContext` e `src/firebase/config.js`
+
+## Env
+
+Variáveis `NEXT_PUBLIC_FIREBASE_*`. O código usa a typo `NEXT_PUBLIC_FIREBASE_PORJECT_ID` — manter alinhado ao `.env`.

@@ -1,0 +1,51 @@
+---
+description: Estrutura de pastas e convenções do template Next.js
+alwaysApply: true
+---
+
+# Estrutura do projeto
+
+Este template usa a pasta `src/` como raiz do código da aplicação.
+
+## Pastas
+
+```
+src/
+  app/           # App Router — rotas, layouts, metadata
+  components/    # auth/, template/, icons/
+  data/          # context/ + hook/ (Auth, App/tema)
+  firebase/      # config do client SDK
+  model/         # tipos de domínio (User)
+  styles/        # CSS global e tokens de tema
+public/          # Assets estáticos (favicon, imagens, SVGs)
+```
+
+`lib/` é opcional — só crie se precisar de utilitários genéricos.
+
+## Regras
+
+- Rotas ficam **somente** em `src/app/` — nunca em `src/styles/pages/` ou fora de `app/`
+- **Não crie `src/pages/`** — este template usa só App Router; pasta vazia ou ausente com `next dev` ativo causa `ENOENT: scandir 'src/pages'`
+- Cada rota usa o arquivo **`page.tsx`** (singular), nunca `pages.tsx`
+- A URL segue o nome da pasta: `src/app/adjustments/page.tsx` → `/adjustments`
+- Links no menu devem usar a mesma URL da pasta da rota
+- Alias `@/` aponta para `src/` (ex.: `@/components/Button`, `@/styles/globals.css`)
+- `public/` permanece na raiz do projeto, fora de `src/`
+- Arquivos de config (`next.config.ts`, `tsconfig.json`, etc.) ficam na raiz
+- `src/styles/pages/` **não** é pasta de rotas (pode estar vazia)
+
+## Rotas
+
+```
+src/app/
+  page.tsx                  → /
+  layout.tsx                → layout global (AuthProvider + AppProvider)
+  adjustments/page.tsx      → /adjustments
+  notifications/page.tsx    → /notifications
+  profile/page.tsx          → /profile
+  authentication/page.tsx   → /authentication (público; sem Layout)
+```
+
+## Next.js 16
+
+Este projeto usa Next.js 16 com breaking changes. Antes de implementar features, consulte `node_modules/next/dist/docs/` — não assuma APIs de versões anteriores.

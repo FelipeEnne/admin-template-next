@@ -1,0 +1,68 @@
+---
+description: Padrões React e Next.js App Router
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# React e Next.js
+
+## Server Components (padrão)
+
+- Componentes em `src/app/` são Server Components por padrão
+- Use `"use client"` apenas quando precisar de hooks, event handlers ou browser APIs
+- Root `layout.tsx` permanece Server Component; importe nele os providers client (`AuthProvider`, `AppProvider`)
+
+```tsx
+// ❌ BAD — client desnecessário
+"use client";
+export default function StaticCard() {
+  return <div>Conteúdo estático</div>;
+}
+
+// ✅ GOOD — Server Component
+export default function StaticCard() {
+  return <div>Conteúdo estático</div>;
+}
+```
+
+## Providers e hooks
+
+- Auth: `useAuth` de `@/data/hook/useAuth`
+- Tema: `useAppData` de `@/data/hook/useAppData`
+- Páginas admin: compor com `Layout` (inclui `ForceAuth`)
+- Login (`/authentication`): **não** usar `Layout`
+
+## Metadata
+
+- Defina `metadata` em `layout.tsx`, não em páginas client
+- Use `export const metadata: Metadata` do `next`
+
+## Imports
+
+- Prefira alias `@/` em vez de caminhos relativos longos
+
+```tsx
+// ❌ BAD
+import { Button } from "../../../components/Button";
+
+// ✅ GOOD
+import { Button } from "@/components/Button";
+```
+
+## Imagens e links
+
+- Use `next/image` para imagens otimizadas
+- Links internos: `next/link`; externos: `<a>` com `rel="noopener noreferrer"`
+- No Next.js 13+, **não** coloque `<a>` dentro de `<Link>` — gera erro 500
+
+```tsx
+// ❌ BAD — padrão antigo do Pages Router
+<Link href={url}>
+  <a className="flex">{text}</a>
+</Link>
+
+// ✅ GOOD — classes vão direto no Link
+<Link href={url} className="flex">
+  {text}
+</Link>
+```

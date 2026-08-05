@@ -1,0 +1,40 @@
+---
+description: Tailwind CSS v4 e estilização do template
+globs: src/**/*.{css,tsx}
+alwaysApply: false
+---
+
+# Estilização
+
+## Tailwind v4
+
+- CSS global em `src/styles/globals.css` com `@import "tailwindcss"`
+- Importado no root layout: `import "@/styles/globals.css"`
+- Tokens de tema em `:root` e `@theme inline`
+- Font principal: Elms Sans (`--font-sans`)
+
+## Dark mode
+
+- Toggle real: classe `.dark` via `AppContext` + `@custom-variant dark (&:where(.dark, .dark *))`
+- `prefers-color-scheme` só ajusta tokens em `:root` — **não** controla o tema do template
+
+## Preferências
+
+- Use tokens do tema quando possível: `bg-background`, `text-foreground`
+- Evite classes Tailwind com typo — valide nomes de utilitários
+
+```tsx
+// ❌ BAD — typo em classe Tailwind
+<div className="bg-gradtent-to-r from-green-500" />
+
+// ✅ GOOD
+<div className="bg-gradient-to-r from-green-500 to-blue-50" />
+
+// ✅ GOOD — tokens do tema
+<div className="bg-background text-foreground" />
+```
+
+## Componentes
+
+- Estilos de componente via `className` com Tailwind
+- Evite CSS modules a menos que o componente exija isolamento específico

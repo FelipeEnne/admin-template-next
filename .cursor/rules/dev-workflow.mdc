@@ -1,0 +1,32 @@
+---
+description: Servidor de desenvolvimento e troubleshooting do Next.js
+alwaysApply: true
+---
+
+# Dev workflow
+
+## Um servidor por vez
+
+- Rode **apenas um** `npm run dev` por projeto
+- Se aparecer `Another next dev server is already running`, pare o anterior com `Ctrl+C` ou `taskkill /PID <pid> /F`
+- Não abra vários terminais com `next dev` ao mesmo tempo
+
+## Após mudar pastas de rota
+
+- Ao criar, renomear ou remover pastas em `src/app/`, reinicie o dev server
+- Remover `src/pages/` com o servidor rodando pode gerar `ENOENT: scandir` em loop
+
+## Turbopack e monorepo local
+
+- Há `package-lock.json` na pasta pai (`curso-nextjs/`); o Turbopack pode inferir a raiz errada
+- `next.config.ts` já define `turbopack.root` — não remova sem motivo
+
+## Diagnóstico rápido
+
+| Sintoma | Causa provável | Ação |
+|---------|----------------|------|
+| `scandir 'src/pages'` | Pasta Pages Router inexistente ou removida com dev ativo | Remover `src/pages/`, reiniciar `npm run dev` |
+| Rota 404 | Arquivo não é `page.tsx` ou pasta não existe | Conferir `src/app/<rota>/page.tsx` |
+| GET 500 com `Invalid Link` | `<a>` dentro de `<Link>` | Mover `className` para o `<Link>` |
+| Porta 3000 em uso | Outro `next dev` rodando | `taskkill` no PID indicado |
+| Login Google falha | `.env` ausente ou inválido | Conferir `NEXT_PUBLIC_FIREBASE_*` (incl. typo `PORJECT_ID`) |
