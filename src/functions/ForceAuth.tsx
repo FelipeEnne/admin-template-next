@@ -1,28 +1,16 @@
 import useAuth from "@/data/hook/useAuth";
-import Head from "next/head";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ForceAuth(jsx: React.ReactNode) {
   const { user, loading } = useAuth();
   const router = useRouter();
-  function renderContent() {
-    return (
-      <>
-        <Head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-      if (!document.cookie.includes("admin-template-auth")) {
-        window.location.href = "/authentication";
-      }
-    `,
-            }}
-          ></script>
-        </Head>
-        {jsx}
-      </>
-    );
-  }
+
+  useEffect(() => {
+    if (!loading && !user?.email) {
+      router.push("/authentication");
+    }
+  }, [loading, user, router]);
 
   function renderLoading() {
     return (
@@ -32,12 +20,13 @@ export default function ForceAuth(jsx: React.ReactNode) {
     );
   }
 
-  if (!loading && user?.email) {
-    return renderContent();
-  } else if (loading) {
+  if (loading) {
     return renderLoading();
-  } else {
-    router.push("/authentication");
-    return null;
   }
+
+  if (!user?.email) {
+    return renderLoading();
+  }
+
+  return <>{jsx}</>;
 }

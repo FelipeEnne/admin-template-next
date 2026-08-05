@@ -7,9 +7,9 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Authentication() {
-  const { user, loginGoogle } = useAuth();
+  const { signUp, login, loginGoogle } = useAuth();
 
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,18 +22,43 @@ export default function Authentication() {
     }, 5000);
   };
 
-  const handleSubmit = () => {
-    if (mode === "login") {
-      if (email === "") {
-        showError("Email is required");
-        return;
+  const handleSubmit = async () => {
+    try {
+      if (mode === "login") {
+        if (email === "") {
+          showError("Email is required");
+          return;
+        }
+        if (password === "") {
+          showError("Password is required");
+          return;
+        }
+        await login(email, password);
+      } else {
+        if (email === "") {
+          showError("Email is required");
+          return;
+        }
+        if (password === "") {
+          showError("Password is required");
+          return;
+        }
+        if (confirmPassword === "") {
+          showError("Confirm password is required");
+          return;
+        }
+        if (password !== confirmPassword) {
+          showError("Passwords do not match");
+          return;
+        }
+        await signUp(email, password);
       }
-      if (password === "") {
-        showError("Password is required");
-        return;
-      }
-    } else {
-      console.log("Register");
+    } catch (error) {
+      console.error(error);
+      showError(
+        "An error occurred while trying to " +
+          (mode === "login" ? "login" : "sign up"),
+      );
     }
   };
 
@@ -118,7 +143,7 @@ export default function Authentication() {
         </button>
 
         <button
-          onClick={() => setMode(mode === "login" ? "register" : "login")}
+          onClick={() => setMode(mode === "login" ? "signup" : "login")}
           className="text-sm text-gray-500"
         >
           {mode === "login" ? (
@@ -126,9 +151,9 @@ export default function Authentication() {
               Don&apos;t have an account?{" "}
               <a
                 className="text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer"
-                onClick={() => setMode("register")}
+                onClick={() => setMode("signup")}
               >
-                Register
+                Sign Up
               </a>
             </p>
           ) : (

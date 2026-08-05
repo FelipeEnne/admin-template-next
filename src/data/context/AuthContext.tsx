@@ -10,12 +10,16 @@ import {
   type User as FirebaseUser,
   onIdTokenChanged,
   signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { createContext, useState, useEffect } from "react";
 
 interface AuthContextProps {
   user: User | null;
   loading: boolean;
+  signUp: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   loginGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -23,6 +27,8 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   user: null,
   loading: false,
+  signUp: async () => {},
+  login: async () => {},
   loginGoogle: async () => {},
   logout: async () => {},
 });
@@ -53,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   async function configSession(userFirebase: FirebaseUser | null) {
-    if (userFirebase?.emailVerified) {
+    if (userFirebase?.email) {
       const user = await normalizeUser(userFirebase);
       setUser(user);
       cookieManager(true);
@@ -64,6 +70,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       cookieManager(false);
       setLoading(false);
       return false;
+    }
+  }
+
+  async function signUp(email: string, password: string) {
+    try {
+      setLoading(true);
+      const resp = await createUserWithEmailAndPassword(auth, email, password);
+      await configSession(resp.user as FirebaseUser);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function login(email: string, password: string) {
+    try {
+      setLoading(true);
+      const resp = await signInWithEmailAndPassword(auth, email, password);
+      await configSession(resp.user as FirebaseUser);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -103,7 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, login, signUp, loginGoogle, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
