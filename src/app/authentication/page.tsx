@@ -1,7 +1,9 @@
 "use client";
 
 import AuthInput from "@/components/auth/AuthInput";
-import { IconGoogle, IconWarning } from "@/components/icons";
+import { IconGoogle } from "@/components/icons";
+import Alert from "@/components/ui/Alert";
+import Button from "@/components/ui/Button";
 import useAuth from "@/data/hook/useAuth";
 import Image from "next/image";
 import { useState } from "react";
@@ -63,15 +65,15 @@ export default function Authentication() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-background text-foreground">
       <div className="hidden md:block md:w-1/2 lg:w-2/3">
         <Image
           className="h-screen w-full object-cover"
-          src="https://picsum.photos/800/600"
-          alt="random image"
+          src="/images/auth-hero.svg"
+          alt=""
           width={800}
-          height={600}
-          unoptimized
+          height={1000}
+          priority
         />
       </div>
 
@@ -81,17 +83,9 @@ export default function Authentication() {
         </h1>
 
         {error && (
-          <div
-            className={`
-          flex items-center
-          bg-red-500 text-white py-3 px-5 rounded-lg mb-2
-          border border-red-700
-          `}
-          >
-            {" "}
-            <IconWarning className="size-5" />{" "}
-            <span className="ml-3">{error}</span>
-          </div>
+          <Alert variant="error" className="mb-2">
+            {error}
+          </Alert>
         )}
 
         <AuthInput
@@ -117,57 +111,27 @@ export default function Authentication() {
           notRender={mode === "login"}
         />
 
-        <button
-          onClick={handleSubmit}
-          className={`
-        w-full px-4 py-3 rounded-lg mt-6 cursor-pointer
-        hover:bg-indigo-600 transition-all duration-300
-        bg-indigo-500 text-white 
-        `}
-        >
+        <Button onClick={handleSubmit} fullWidth className="mt-6">
           {mode === "login" ? "Login" : "Create Account"}
-        </button>
-        <hr className="my-6 border-gray-300 w-full" />
+        </Button>
+        <hr className="my-6 border-border w-full" />
 
-        <button
-          onClick={loginGoogle}
-          className={`
-            w-full px-4 py-3 rounded-lg mb-6 cursor-pointer 
-            inline-flex items-center justify-center gap-2
-            text-base font-semibold
-            hover:bg-slate-700 transition-all duration-300
-            bg-slate-800 text-white 
-          `}
-        >
-          Enter with Google <IconGoogle className="size-5" />
-        </button>
+        <Button variant="secondary" onClick={loginGoogle} fullWidth>
+          Sign in with Google <IconGoogle className="size-5" />
+        </Button>
 
-        <button
-          onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          className="text-sm text-gray-500"
-        >
-          {mode === "login" ? (
-            <p className="mt-4">
-              Don&apos;t have an account?{" "}
-              <a
-                className="text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer"
-                onClick={() => setMode("signup")}
-              >
-                Sign Up
-              </a>
-            </p>
-          ) : (
-            <p className="mt-4">
-              Already have an account?{" "}
-              <a
-                className="text-indigo-500 hover:text-indigo-600 font-semibold cursor-pointer"
-                onClick={() => setMode("login")}
-              >
-                Login
-              </a>
-            </p>
-          )}
-        </button>
+        <p className="mt-4 text-sm text-muted">
+          {mode === "login"
+            ? "Don't have an account? "
+            : "Already have an account? "}
+          <button
+            type="button"
+            onClick={() => setMode(mode === "login" ? "signup" : "login")}
+            className="text-brand hover:text-brand-strong font-semibold cursor-pointer"
+          >
+            {mode === "login" ? "Sign Up" : "Login"}
+          </button>
+        </p>
       </div>
     </div>
   );

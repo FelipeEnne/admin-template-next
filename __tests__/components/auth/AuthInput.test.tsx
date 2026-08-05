@@ -7,8 +7,7 @@ describe("AuthInput", () => {
   it("renderiza o label e usa type text por padrão", () => {
     render(<AuthInput label="Email" value="" valueChange={vi.fn()} />);
 
-    expect(screen.getByText("Email")).toBeInTheDocument();
-    expect(screen.getByRole("textbox")).toHaveAttribute("type", "text");
+    expect(screen.getByLabelText("Email")).toHaveAttribute("type", "text");
   });
 
   it("respeita o type e o required informados", () => {
@@ -22,7 +21,8 @@ describe("AuthInput", () => {
       />,
     );
 
-    const input = document.querySelector('input[type="password"]');
+    const input = screen.getByLabelText("Password");
+    expect(input).toHaveAttribute("type", "password");
     expect(input).toBeRequired();
   });
 

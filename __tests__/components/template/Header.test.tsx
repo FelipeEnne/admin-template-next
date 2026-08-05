@@ -7,7 +7,11 @@ import Title from "@/components/template/Title";
 vi.mock("@/data/hook/useAuth", () => import("../../helpers/useAuthMock"));
 vi.mock("@/data/hook/useAppData", () => import("../../helpers/useAppDataMock"));
 
-import { changeTheme, resetTheme, setTheme } from "../../helpers/useAppDataMock";
+import {
+  changeTheme,
+  resetTheme,
+  setTheme,
+} from "../../helpers/useAppDataMock";
 import { resetAuthState } from "../../helpers/useAuthMock";
 
 describe("Title", () => {

@@ -7,17 +7,17 @@ vi.mock("@/data/hook/useAuth", () => import("../helpers/useAuthMock"));
 
 import { login, loginGoogle, signUp } from "../helpers/useAuthMock";
 
-// O `AuthInput` não liga `<label>` ao `<input>`, então as senhas são buscadas
-// pelo atributo `type` em vez de `getByLabelText`.
-const emailInput = () => screen.getByRole("textbox");
-const passwordInputs = () =>
-  Array.from(document.querySelectorAll<HTMLInputElement>('input[type="password"]'));
+const emailInput = () => screen.getByLabelText("Email");
+const passwordInputs = () => [
+  screen.getByLabelText("Password"),
+  ...screen.queryAllByLabelText("Confirm Password"),
+];
 
 const submitButton = (name: "Login" | "Create Account") =>
   screen.getByRole("button", { name });
 
 async function switchToSignUp(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /Don.t have an account/ }));
+  await user.click(screen.getByRole("button", { name: "Sign Up" }));
 }
 
 describe("Página /authentication", () => {
@@ -54,7 +54,7 @@ describe("Página /authentication", () => {
       const user = userEvent.setup();
       await switchToSignUp(user);
 
-      await user.click(screen.getByText("Login"));
+      await user.click(screen.getByRole("button", { name: "Login" }));
 
       expect(
         screen.getByRole("heading", { name: "Login to your account" }),
@@ -137,7 +137,9 @@ describe("Página /authentication", () => {
     it("chama loginGoogle no botão do Google", async () => {
       const user = userEvent.setup();
 
-      await user.click(screen.getByRole("button", { name: /Enter with Google/ }));
+      await user.click(
+        screen.getByRole("button", { name: /Sign in with Google/ }),
+      );
 
       expect(loginGoogle).toHaveBeenCalledOnce();
     });

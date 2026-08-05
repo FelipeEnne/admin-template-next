@@ -1,39 +1,30 @@
 "use client";
 
-import { IconAdjustments, IconBell, IconHome, IconLogout } from "../icons";
+import { IconLogout } from "../icons";
 import ItemMenu from "./ItemMenu";
 import Logo from "./Logo";
 import useAuth from "@/data/hook/useAuth";
+import { navItems } from "@/config/app";
 
 export default function SideMenu() {
   const { logout } = useAuth();
 
   return (
-    <aside
-      className={`flex flex-col bg-gray-200 text-gray-700 dark:bg-gray-950 dark:text-gray-200`}
-    >
+    <aside className="flex flex-col bg-surface text-foreground">
       <div
-        className={`h-20 bg-linear-to-r from-indigo-500 to-purple-500 flex flex-col items-center justify-center`}
+        className={`h-20 bg-linear-to-r from-brand to-brand-accent flex flex-col items-center justify-center`}
       >
         <Logo />
       </div>
       <ul className={`grow`}>
-        <ItemMenu url="/" text="Home" icon={<IconHome />} />
-        <ItemMenu
-          url="/adjustments"
-          text="Settings"
-          icon={<IconAdjustments />}
-        />
-        <ItemMenu
-          url="/notifications"
-          text="Notifications"
-          icon={<IconBell />}
-        />
+        {navItems.map(({ label, url, icon: Icon }) => (
+          <ItemMenu key={url} url={url} text={label} icon={<Icon />} />
+        ))}
       </ul>
       <ul>
         <ItemMenu
           onClick={() => logout()}
-          className={`text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300`}
+          className={`text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300`}
           text="Logout"
           icon={<IconLogout />}
         />

@@ -20,7 +20,7 @@ export default function ItemMenu({
   function renderLink() {
     return (
       <div
-        className={`flex flex-col items-center justify-center text-gray-600 dark:text-gray-400 ${className}`}
+        className={`flex flex-col items-center justify-center text-muted ${className}`}
       >
         {icon}
         <span className="text-xs font-light ">{text}</span>
@@ -31,7 +31,7 @@ export default function ItemMenu({
   return (
     <li
       onClick={onClick}
-      className={`hover:bg-gray-300 dark:hover:bg-gray-700 p-2 cursor-pointer`}
+      className={`hover:bg-surface-sunken p-2 cursor-pointer`}
     >
       {url ? <Link href={url}>{renderLink()}</Link> : renderLink()}
     </li>

@@ -12,23 +12,28 @@ Este template usa a pasta `src/` como raiz do código da aplicação.
 ```
 src/
   app/           # App Router — rotas, layouts, metadata
-  components/    # auth/, template/, icons/
+  config/        # appConfig + navItems (nome, locale, menu, cookie, tema)
+  components/    # ui/, template/, auth/, icons/
   data/          # context/ + hook/ (Auth, App/tema)
   firebase/      # config do client SDK
+  functions/     # ForceAuth
+  lib/           # utilitários genéricos (cn)
   model/         # tipos de domínio (User)
+  proxy.ts       # guarda no edge (ex-middleware.ts)
   styles/        # CSS global e tokens de tema
 public/          # Assets estáticos (favicon, imagens, SVGs)
 ```
 
-`lib/` é opcional — só crie se precisar de utilitários genéricos.
+`src/components/ui/` é o design system do template: Button, Input, Card, Table, Modal, Spinner e Alert. Componentes de tela vão em `template/`, não em `ui/`.
 
 ## Regras
 
 - Rotas ficam **somente** em `src/app/` — nunca em `src/styles/pages/` ou fora de `app/`
 - **Não crie `src/pages/`** — este template usa só App Router; pasta vazia ou ausente com `next dev` ativo causa `ENOENT: scandir 'src/pages'`
 - Cada rota usa o arquivo **`page.tsx`** (singular), nunca `pages.tsx`
-- A URL segue o nome da pasta: `src/app/adjustments/page.tsx` → `/adjustments`
-- Links no menu devem usar a mesma URL da pasta da rota
+- A URL segue o nome da pasta: `src/app/settings/page.tsx` → `/settings`
+- O menu vem de `navItems` em `src/config/app.ts`; ao adicionar uma rota, registre-a lá. Um teste em `__tests__/components/template/SideMenu.test.tsx` falha se a url não tiver `page.tsx`
+- `src/proxy.ts` fica no mesmo nível de `app/` — é a convenção do Next 16 (o antigo `middleware.ts`)
 - Alias `@/` aponta para `src/` (ex.: `@/components/Button`, `@/styles/globals.css`)
 - `public/` permanece na raiz do projeto, fora de `src/`
 - Arquivos de config (`next.config.ts`, `tsconfig.json`, etc.) ficam na raiz
@@ -40,7 +45,7 @@ public/          # Assets estáticos (favicon, imagens, SVGs)
 src/app/
   page.tsx                  → /
   layout.tsx                → layout global (AuthProvider + AppProvider)
-  adjustments/page.tsx      → /adjustments
+  settings/page.tsx         → /settings
   notifications/page.tsx    → /notifications
   profile/page.tsx          → /profile
   authentication/page.tsx   → /authentication (público; sem Layout)

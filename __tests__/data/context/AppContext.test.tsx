@@ -4,11 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { AppProvider, useAppContext } from "@/data/context/AppContext";
 
 function ThemeProbe() {
-  const { thema, changeTheme } = useAppContext();
+  const { theme, changeTheme } = useAppContext();
 
   return (
     <div>
-      <span data-testid="theme">{thema === "" ? "(vazio)" : thema}</span>
+      <span data-testid="theme">{theme === "" ? "(vazio)" : theme}</span>
       <button onClick={changeTheme}>Trocar tema</button>
     </div>
   );
@@ -25,6 +25,7 @@ function renderProbe() {
 describe("AppContext", () => {
   beforeEach(() => {
     localStorage.clear();
+    document.documentElement.classList.remove("dark");
   });
 
   it("usa o tema dark quando não há nada no localStorage", () => {
@@ -59,5 +60,16 @@ describe("AppContext", () => {
 
     expect(screen.getByTestId("theme")).toHaveTextContent("dark");
     expect(localStorage.getItem("theme")).toBe("dark");
+  });
+
+  // A classe fica no <html> para valer também em /authentication, que não usa Layout.
+  it("reflete o tema na classe do elemento html", async () => {
+    renderProbe();
+
+    expect(document.documentElement).toHaveClass("dark");
+
+    await userEvent.click(screen.getByRole("button", { name: "Trocar tema" }));
+
+    expect(document.documentElement).not.toHaveClass("dark");
   });
 });

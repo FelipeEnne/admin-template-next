@@ -11,7 +11,7 @@ alwaysApply: true
 |---|---|
 | `npm run test` | Vitest em modo watch |
 | `npm run test:run` | Roda a suíte uma vez (use na verificação) |
-| `npm run test:coverage` | Cobertura de `src/**` |
+| `npm run test:coverage` | Cobertura de `src/**`; falha abaixo do threshold em `vitest.config.mts` |
 
 Vitest 4 + React Testing Library em ambiente `jsdom`. Config em `vitest.config.mts` (resolução do alias `@/` via `resolve.tsconfigPaths`), matchers do `jest-dom` e `cleanup` em `vitest.setup.ts`.
 
@@ -37,5 +37,6 @@ vi.mock("next/navigation", () => import("../../helpers/nextNavigationMock"));
 ## Armadilhas deste projeto
 
 - `ForceAuth` recebe o JSX como argumento (`ForceAuth(jsx)`), não como props — chame dentro de um componente sonda para o React executar os hooks
-- `AuthInput` não liga `<label>` ao `<input>`; `getByLabelText` não funciona. Use `getByRole("textbox")` para o email e `input[type="password"]` para as senhas
 - Com `vi.useFakeTimers()`, use `fireEvent` — o `userEvent` precisa de timers reais e trava
+- `AppContext` mexe na classe do `<html>`, que é global no jsdom: limpe com `document.documentElement.classList.remove("dark")` no `beforeEach`
+- Componentes de `src/components/ui/` são testados em `__tests__/components/ui/`. `Input` liga `<label>` ao `<input>` via `useId`, então prefira `getByLabelText` a buscas por `type`

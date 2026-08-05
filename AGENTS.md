@@ -1,4 +1,5 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
@@ -6,7 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # admin-template-next
 
-Template de painel administrativo (projeto de curso). App Router, autenticação Firebase só no client, Tailwind v4.
+Template de painel administrativo reutilizável. App Router, autenticação Firebase, Tailwind v4.
+
+Ao começar um projeto novo a partir daqui, o ponto de entrada é `src/config/app.ts`: nome do app, locale, itens do menu, nome do cookie e tema padrão saem todos de lá.
 
 ## Git: não commitar
 
@@ -16,14 +19,15 @@ Template de painel administrativo (projeto de curso). App Router, autenticação
 
 ## Stack
 
-| Item | Versão / observação |
-|---|---|
-| Next.js | 16.2.9 — App Router, Turbopack, pasta `src/` |
-| React | 19.2.4 |
-| Tailwind CSS | v4 via `@tailwindcss/postcss` (sem `tailwind.config`) |
-| Firebase | 12.x, apenas `firebase/app` + `firebase/auth` |
-| Testes | Vitest 4 + React Testing Library, ambiente `jsdom` |
-| Outros | `js-cookie`, TypeScript 5, ESLint 9 (`eslint-config-next`) |
+| Item         | Versão / observação                                        |
+| ------------ | ---------------------------------------------------------- |
+| Next.js      | 16.2.9 — App Router, Turbopack, pasta `src/`               |
+| React        | 19.2.4                                                     |
+| Tailwind CSS | v4 via `@tailwindcss/postcss` (sem `tailwind.config`)      |
+| Firebase     | 12.x, apenas `firebase/app` + `firebase/auth`              |
+| Testes       | Vitest 4 + React Testing Library, ambiente `jsdom`         |
+| Formatação   | Prettier + `eslint-config-prettier`                        |
+| Outros       | `js-cookie`, TypeScript 5, ESLint 9 (`eslint-config-next`) |
 
 ## Comandos
 
@@ -31,12 +35,16 @@ Template de painel administrativo (projeto de curso). App Router, autenticação
 npm run dev            # apenas UM por projeto — Next 16 bloqueia o segundo com "Another next dev server is already running"
 npm run build
 npm run lint           # o script é só `eslint`, sem argumentos
+npm run format         # prettier --write .
+npm run format:check   # o que o CI roda
 npm run test           # Vitest em watch
 npm run test:run       # roda a suíte uma vez
-npm run test:coverage  # cobertura de src/**
+npm run test:coverage  # cobertura de src/** com threshold (falha abaixo dele)
 ```
 
-Verificação de uma mudança = `npm run test:run` + `npm run lint` + `npm run build`.
+Verificação de uma mudança = `npm run test:run` + `npm run lint` + `npm run build`. O CI (`.github/workflows/ci.yml`) roda isso mais `format:check` e a cobertura com threshold.
+
+Se o `build` reclamar de módulo inexistente em `.next/dev/types/validator.ts`, são tipos de rota velhos: apague `.next/` e rode de novo.
 
 Antes de subir um dev server, confira os terminais existentes. Para matar um travado: `taskkill /PID <pid> /F` (Windows/PowerShell).
 
@@ -45,66 +53,73 @@ Antes de subir um dev server, confira os terminais existentes. Para matar um tra
 ```
 src/
   app/                          # rotas (App Router)
-    layout.tsx                  # Server Component: AuthProvider > AppProvider, metadata, fontes Geist
-    page.tsx                    # /
-    adjustments/page.tsx        # /adjustments  (menu mostra "Settings")
+    layout.tsx                  # Server Component: AuthProvider > AppProvider, metadata, fontes Geist, script de tema
+    page.tsx                    # /              (dashboard de exemplo com Cards)
+    settings/page.tsx           # /settings
     notifications/page.tsx      # /notifications
     profile/page.tsx            # /profile      (sem item no menu)
     authentication/page.tsx     # /authentication (rota pública, não usa Layout)
+  config/app.ts                 # appConfig + navItems — edite aqui ao iniciar um projeto
   components/
+    ui/                         # design system: Button, Input, Card, Table, Modal, Spinner, Alert
     template/Layout.tsx         # ForceAuth + SideMenu + Header + Content; props: title, subtitle, children
     template/                   # Header, SideMenu, ItemMenu, Content, Title, Logo, UserAvatar, ButtonChangeTheme
-    auth/AuthInput.tsx          # input do formulário de login
+    auth/AuthInput.tsx          # wrapper de `ui/Input` usado no formulário de login
     icons/index.tsx             # todos os ícones SVG, exportados nomeados
   data/
     context/AuthContext.tsx     # sessão Firebase, cookie, login/logout
-    context/AppContext.tsx      # tema (localStorage "theme"), expõe `thema` e `changeTheme`
+    context/AppContext.tsx      # tema (localStorage), expõe `theme` e `changeTheme`
     hook/useAuth.ts             # useContext(AuthContext)
     hook/useAppData.ts          # useContext(appContext)
   firebase/config.js            # initializeApp + getAuth (único lugar que fala com o SDK)
   functions/ForceAuth.tsx       # guarda de rota no client; redireciona para /authentication
+  lib/cn.ts                     # junta classNames condicionais
   model/User.ts                 # tipo de domínio
+  proxy.ts                      # guarda no edge (Next 16 chama de Proxy, não Middleware)
   styles/globals.css            # Tailwind v4, tokens de tema, variante `dark`
 __tests__/                      # Vitest + RTL, espelha src/; mocks em __tests__/helpers/
 ```
 
-Config na raiz: `next.config.ts` define `turbopack.root` (há `package-lock.json` na pasta pai, senão o Turbopack erra a raiz) e `images.remotePatterns` para `lh3.googleusercontent.com` e `picsum.photos`.
+Config na raiz: `next.config.ts` define `turbopack.root` (há `package-lock.json` na pasta pai, senão o Turbopack erra a raiz) e `images.remotePatterns` para `lh3.googleusercontent.com`.
 
 ## Convenções que quebram se ignoradas
 
 - Arquivo de rota é **`page.tsx`** (singular). `pages.tsx` não cria rota nenhuma
 - **Não crie `src/pages/`** — mesmo vazia, o watcher tenta monitorá-la e falha com `ENOENT: scandir 'src/pages'`
-- A URL é o nome da pasta em `app/`. Links no menu devem bater com a pasta real
+- A URL é o nome da pasta em `app/`. O menu sai de `navItems` em `src/config/app.ts` e um teste garante que cada url tem `page.tsx` correspondente
+- Guarda no edge é **`src/proxy.ts`** — no Next 16 o `middleware.ts` foi renomeado para `proxy.ts`
 - Alias `@/` aponta para `src/` — use no lugar de `../../..`
 - `<Link href="..." className="...">` — **nunca** `<a>` dentro de `<Link>` (erro 500)
 - `"use client"` só quando há hook, event handler ou browser API. O root `layout.tsx` permanece Server Component
 - Páginas admin renderizam `<Layout title subtitle>` (que já inclui `ForceAuth`); `/authentication` **não** usa `Layout`
 - Auth pela UI vem de `useAuth` (`@/data/hook/useAuth`), tema de `useAppData`. Nunca importe `firebase/*` num componente
-- Estilo via `className` do Tailwind; prefira tokens (`bg-background`, `text-foreground`)
+- Antes de escrever um botão/input/card na mão, veja se já existe em `src/components/ui/`
+- Estilo via `className` do Tailwind com os tokens semânticos (`bg-background`, `text-foreground`, `bg-surface`, `border-border`, `text-brand`). Eles já viram par claro/escuro sozinhos — não escreva `bg-gray-200 dark:bg-gray-800`
 - Após criar, renomear ou remover pastas em `src/app/`, reinicie o dev server
 
 ## Auth em uma tela
 
-- Login real: **só Google** (`signInWithPopup` em `AuthContext`). O formulário de email/senha em `/authentication` valida campos, mas ainda não está ligado ao Firebase
-- O cookie `admin-template-auth` é apenas uma **flag booleana** (7 dias) — não guarda o JWT
-- Restauração de sessão: se o cookie existe, `onIdTokenChanged` reativa o usuário; `configSession` exige `emailVerified`
-- Proteção é **só no client** — não há proxy/middleware. `ForceAuth` mostra spinner enquanto `loading` e redireciona sem usuário
-- Env: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PORJECT_ID`. O typo `PORJECT_ID` é intencional em `src/firebase/config.js` — mantenha código e `.env` alinhados
+- Três fluxos, todos ligados ao Firebase em `AuthContext`: Google (`signInWithPopup`), login por email/senha (`signInWithEmailAndPassword`) e cadastro (`createUserWithEmailAndPassword`)
+- O cookie (nome em `appConfig.authCookieName`) é apenas uma **flag booleana** (7 dias) — não guarda o JWT
+- Restauração de sessão: se o cookie existe, `onIdTokenChanged` reativa o usuário. `configSession` só exige `email` — **não** checa `emailVerified`, porque não há fluxo de envio de email de verificação; se quiser exigir, implemente o envio junto
+- Proteção em duas camadas: `src/proxy.ts` faz uma checagem otimista do cookie no edge, e `ForceAuth` valida a sessão de verdade no client (spinner enquanto `loading`, redireciona sem usuário). Como o cookie não é verificável, o proxy sozinho não é autorização
+- Env: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PORJECT_ID` (veja `.env.example`). O typo `PORJECT_ID` é intencional em `src/firebase/config.js` — mantenha código e `.env` alinhados
 
 ## Antes de escrever código Next
 
 Leia o guia correspondente em `node_modules/next/dist/docs/` — não confie na memória de versões anteriores. Atalhos úteis:
 
-| Assunto | Caminho |
-|---|---|
-| Trabalhar neste repo como agente | `01-app/02-guides/ai-agents.md` |
-| Layouts e páginas | `01-app/01-getting-started/03-layouts-and-pages.md` |
-| Server vs Client Components | `01-app/01-getting-started/05-server-and-client-components.md` |
-| CSS / Tailwind | `01-app/01-getting-started/11-css.md` |
-| Fontes | `01-app/01-getting-started/13-fonts.md` |
-| `Link` | `01-app/03-api-reference/02-components/link.md` |
-| Autenticação | `01-app/02-guides/authentication.md` |
-| Breaking changes da v16 | `01-app/02-guides/upgrading/version-16.md` |
+| Assunto                          | Caminho                                                        |
+| -------------------------------- | -------------------------------------------------------------- |
+| Trabalhar neste repo como agente | `01-app/02-guides/ai-agents.md`                                |
+| Layouts e páginas                | `01-app/01-getting-started/03-layouts-and-pages.md`            |
+| Server vs Client Components      | `01-app/01-getting-started/05-server-and-client-components.md` |
+| CSS / Tailwind                   | `01-app/01-getting-started/11-css.md`                          |
+| Fontes                           | `01-app/01-getting-started/13-fonts.md`                        |
+| `Link`                           | `01-app/03-api-reference/02-components/link.md`                |
+| Autenticação                     | `01-app/02-guides/authentication.md`                           |
+| Proxy (ex-Middleware)            | `01-app/03-api-reference/03-file-conventions/proxy.md`         |
+| Breaking changes da v16          | `01-app/02-guides/upgrading/version-16.md`                     |
 
 ## Onde buscar mais contexto
 
@@ -112,6 +127,6 @@ Leia o guia correspondente em `node_modules/next/dist/docs/` — não confie na 
 - `.cursor/rules/react-next.mdc` — padrões de React/App Router com exemplos bom/ruim
 - `.cursor/rules/auth.mdc` — detalhes de sessão e proteção de rotas
 - `.cursor/rules/dev-workflow.mdc` — dev server, Turbopack e tabela de diagnóstico
-- `.cursor/rules/styling.mdc` — Tailwind v4 e dark mode
+- `.cursor/rules/styling.mdc` — Tailwind v4, tokens de tema e dark mode
 - `.cursor/rules/testing.mdc` — onde os testes ficam, mocks obrigatórios e armadilhas
 - `docs/lessons-learned.md` — erros já enfrentados neste projeto e como foram resolvidos

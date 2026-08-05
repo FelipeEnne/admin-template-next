@@ -1,0 +1,40 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 1000"
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-label="Abstract gradient artwork"
+>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="55%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <radialGradient id="glowTop" cx="0.25" cy="0.2" r="0.7">
+      <stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowBottom" cx="0.8" cy="0.85" r="0.6">
+      <stop offset="0%" stop-color="#f0abfc" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#f0abfc" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#backdrop)" />
+  <rect width="800" height="1000" fill="url(#glowTop)" />
+  <rect width="800" height="1000" fill="url(#glowBottom)" />
+
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="1.5">
+    <circle cx="180" cy="220" r="120" />
+    <circle cx="180" cy="220" r="200" />
+    <circle cx="180" cy="220" r="290" />
+    <circle cx="640" cy="780" r="140" />
+    <circle cx="640" cy="780" r="230" />
+  </g>
+
+  <g fill="#ffffff" fill-opacity="0.08">
+    <rect x="420" y="120" width="260" height="260" rx="48" transform="rotate(18 550 250)" />
+    <rect x="90" y="620" width="200" height="200" rx="40" transform="rotate(-12 190 720)" />
+  </g>
+</svg>

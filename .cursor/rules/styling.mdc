@@ -10,31 +10,43 @@ alwaysApply: false
 
 - CSS global em `src/styles/globals.css` com `@import "tailwindcss"`
 - Importado no root layout: `import "@/styles/globals.css"`
-- Tokens de tema em `:root` e `@theme inline`
-- Font principal: Elms Sans (`--font-sans`)
+- Tokens de tema em `:root` / `.dark` e expostos como utilitários no `@theme inline`
+- Fonte: Geist, carregada por `next/font` no root layout e ligada a `--font-sans`
+- A sintaxe é v4, não v3. Gradiente é `bg-linear-to-r` (o `bg-gradient-to-r` da v3 é alias legado)
 
-## Dark mode
+## Tokens
 
-- Toggle real: classe `.dark` via `AppContext` + `@custom-variant dark (&:where(.dark, .dark *))`
-- `prefers-color-scheme` só ajusta tokens em `:root` — **não** controla o tema do template
+Use os tokens semânticos; eles já mudam sozinhos entre claro e escuro:
 
-## Preferências
-
-- Use tokens do tema quando possível: `bg-background`, `text-foreground`
-- Evite classes Tailwind com typo — valide nomes de utilitários
+| Token                    | Para                                |
+| ------------------------ | ----------------------------------- |
+| `bg-background`          | fundo da página                     |
+| `text-foreground`        | texto principal                     |
+| `text-muted`             | texto secundário                    |
+| `bg-surface`             | painéis (menu lateral)              |
+| `bg-surface-raised`      | cards, tabelas, modais              |
+| `bg-surface-sunken`      | hover, cabeçalho de tabela, inputs  |
+| `border-border`          | bordas e divisórias                 |
+| `bg-brand` / `bg-brand-strong` / `bg-brand-accent` | cor da marca |
 
 ```tsx
-// ❌ BAD — typo em classe Tailwind
-<div className="bg-gradtent-to-r from-green-500" />
+// ❌ BAD — par claro/escuro escrito na mão em cada componente
+<div className="bg-gray-300 text-gray-700 dark:bg-gray-800 dark:text-gray-200" />
 
-// ✅ GOOD
-<div className="bg-gradient-to-r from-green-500 to-blue-50" />
-
-// ✅ GOOD — tokens do tema
+// ✅ GOOD — o token já resolve os dois temas
 <div className="bg-background text-foreground" />
 ```
 
+Para trocar a identidade visual do template, mexa em `--brand*` no `globals.css` — não saia caçando `indigo-500` pelos componentes.
+
+## Dark mode
+
+- Classe `.dark` no `<html>`, aplicada pelo `AppProvider` e pelo script inline do root layout (que roda antes do paint para não piscar)
+- `@custom-variant dark (&:where(.dark, .dark *))` faz as variantes `dark:` responderem a essa classe
+- Não use `prefers-color-scheme`: o tema é escolha explícita do usuário, guardada no `localStorage`
+
 ## Componentes
 
-- Estilos de componente via `className` com Tailwind
+- Antes de estilizar do zero, veja `src/components/ui/` — Button, Input, Card, Table, Modal, Spinner e Alert já existem
+- Componentes novos aceitam `className` como último argumento do `cn()` para dar override a quem usa
 - Evite CSS modules a menos que o componente exija isolamento específico

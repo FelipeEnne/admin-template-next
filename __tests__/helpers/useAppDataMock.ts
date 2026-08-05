@@ -2,16 +2,16 @@ import { vi } from "vitest";
 
 export const changeTheme = vi.fn();
 
-export const appState: { thema?: string } = { thema: "dark" };
+export const appState: { theme?: string } = { theme: "dark" };
 
-export function setTheme(thema?: string) {
-  appState.thema = thema;
+export function setTheme(theme?: string) {
+  appState.theme = theme;
 }
 
 export function resetTheme() {
-  appState.thema = "dark";
+  appState.theme = "dark";
 }
 
-const useAppData = vi.fn(() => ({ thema: appState.thema, changeTheme }));
+const useAppData = vi.fn(() => ({ theme: appState.theme, changeTheme }));
 
 export default useAppData;

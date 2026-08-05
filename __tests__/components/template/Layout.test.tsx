@@ -8,7 +8,7 @@ vi.mock("@/data/hook/useAppData", () => import("../../helpers/useAppDataMock"));
 vi.mock("next/navigation", () => import("../../helpers/nextNavigationMock"));
 
 import { resetAuthState, setAuthState } from "../../helpers/useAuthMock";
-import { resetTheme, setTheme } from "../../helpers/useAppDataMock";
+import { resetTheme } from "../../helpers/useAppDataMock";
 import { push } from "../../helpers/nextNavigationMock";
 
 function renderLayout() {
@@ -36,15 +36,6 @@ describe("Layout", () => {
       "href",
       "/",
     );
-  });
-
-  it("aplica a classe do tema vindo do AppContext", () => {
-    setAuthState({ user: fakeUser() });
-    setTheme("dark");
-
-    const { container } = renderLayout();
-
-    expect(container.querySelector(".dark")).toBeInTheDocument();
   });
 
   it("bloqueia o conteúdo e redireciona sem usuário", async () => {

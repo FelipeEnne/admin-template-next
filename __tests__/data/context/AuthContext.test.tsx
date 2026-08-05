@@ -23,8 +23,12 @@ function AuthProbe() {
   return (
     <div>
       <span data-testid="loading">{String(loading)}</span>
-      <span data-testid="user">{user ? JSON.stringify(user) : "sem usuário"}</span>
-      <button onClick={() => login("ana@example.com", "123456").catch(() => {})}>
+      <span data-testid="user">
+        {user ? JSON.stringify(user) : "sem usuário"}
+      </span>
+      <button
+        onClick={() => login("ana@example.com", "123456").catch(() => {})}
+      >
         login
       </button>
       <button

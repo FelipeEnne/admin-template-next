@@ -1,6 +1,8 @@
 import useAuth from "@/data/hook/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { appConfig } from "@/config/app";
+import Spinner from "@/components/ui/Spinner";
 
 export default function ForceAuth(jsx: React.ReactNode) {
   const { user, loading } = useAuth();
@@ -8,14 +10,14 @@ export default function ForceAuth(jsx: React.ReactNode) {
 
   useEffect(() => {
     if (!loading && !user?.email) {
-      router.push("/authentication");
+      router.push(appConfig.loginRoute);
     }
   }, [loading, user, router]);
 
   function renderLoading() {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white-900 "></div>
+      <div className="flex items-center justify-center h-screen text-brand">
+        <Spinner />
       </div>
     );
   }

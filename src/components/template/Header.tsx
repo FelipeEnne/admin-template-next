@@ -11,14 +11,14 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle }: HeaderProps) {
-  const { thema, changeTheme } = useAppData();
+  const { theme, changeTheme } = useAppData();
 
   return (
     <div>
       <main className="flex">
         <Title title={title} subtitle={subtitle} />
         <div className="flex grow justify-end items-center">
-          <ButtonChangeTheme theme={thema} changeTheme={changeTheme} />
+          <ButtonChangeTheme theme={theme} changeTheme={changeTheme} />
           <UserAvatar className="ml-3" />
         </div>
       </main>

@@ -15,6 +15,7 @@ alwaysApply: true
 
 - Ao criar, renomear ou remover pastas em `src/app/`, reinicie o dev server
 - Remover `src/pages/` com o servidor rodando pode gerar `ENOENT: scandir` em loop
+- Renomear pasta de rota deixa tipos velhos em `.next/dev/types/`; se o `build` acusar módulo inexistente ali, apague `.next/`
 
 ## Turbopack e monorepo local
 
@@ -30,3 +31,5 @@ alwaysApply: true
 | GET 500 com `Invalid Link` | `<a>` dentro de `<Link>` | Mover `className` para o `<Link>` |
 | Porta 3000 em uso | Outro `next dev` rodando | `taskkill` no PID indicado |
 | Login Google falha | `.env` ausente ou inválido | Conferir `NEXT_PUBLIC_FIREBASE_*` (incl. typo `PORJECT_ID`) |
+| `Cannot find module '../../../src/app/<rota>/page.js'` no build | Tipos de rota antigos em `.next/` após renomear pasta | `Remove-Item -Recurse -Force .next` e rodar de novo |
+| Redirect infinito para `/authentication` | Cookie de sessão ausente e `src/proxy.ts` barrando no edge | Conferir o matcher em `src/proxy.ts` e o nome em `appConfig.authCookieName` |

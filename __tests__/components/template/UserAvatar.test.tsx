@@ -19,7 +19,9 @@ describe("UserAvatar", () => {
   });
 
   it("usa a foto do usuário autenticado", () => {
-    setAuthState({ user: fakeUser({ imageUrl: "https://exemplo.com/ana.png" }) });
+    setAuthState({
+      user: fakeUser({ imageUrl: "https://exemplo.com/ana.png" }),
+    });
 
     render(<UserAvatar />);
 

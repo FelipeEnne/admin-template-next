@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/firebase/config";
 import Cookies from "js-cookie";
 import User from "@/model/User";
+import { appConfig } from "@/config/app";
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -47,9 +48,11 @@ async function normalizeUser(userFirebase: FirebaseUser): Promise<User> {
 
 function cookieManager(logged: boolean) {
   if (logged) {
-    Cookies.set("admin-template-auth", String(logged), { expires: 7 });
+    Cookies.set(appConfig.authCookieName, String(logged), {
+      expires: appConfig.authCookieDays,
+    });
   } else {
-    Cookies.remove("admin-template-auth");
+    Cookies.remove(appConfig.authCookieName);
   }
 }
 
@@ -78,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const resp = await createUserWithEmailAndPassword(auth, email, password);
       await configSession(resp.user as FirebaseUser);
-      router.push("/");
+      router.push(appConfig.homeRoute);
     } catch (error) {
       console.error(error);
       throw error;
@@ -92,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const resp = await signInWithEmailAndPassword(auth, email, password);
       await configSession(resp.user as FirebaseUser);
-      router.push("/");
+      router.push(appConfig.homeRoute);
     } catch (error) {
       console.error(error);
       throw error;
@@ -107,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const provider = new GoogleAuthProvider();
       const resp = await signInWithPopup(auth, provider);
       await configSession(resp.user);
-      router.push("/");
+      router.push(appConfig.homeRoute);
     } catch (error) {
       console.error(error);
     } finally {
@@ -128,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    if (Cookies.get("admin-template-auth")) {
+    if (Cookies.get(appConfig.authCookieName)) {
       const cancel = onIdTokenChanged(auth, configSession);
       return () => cancel();
     } else {

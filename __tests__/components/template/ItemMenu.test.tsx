@@ -5,11 +5,11 @@ import ItemMenu from "@/components/template/ItemMenu";
 
 describe("ItemMenu", () => {
   it("renderiza um link para a url informada", () => {
-    render(<ItemMenu url="/adjustments" text="Settings" icon={<svg />} />);
+    render(<ItemMenu url="/settings" text="Settings" icon={<svg />} />);
 
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute(
       "href",
-      "/adjustments",
+      "/settings",
     );
   });
 
