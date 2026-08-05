@@ -1,0 +1,41 @@
+---
+description: Testes unitários com Vitest e React Testing Library
+alwaysApply: true
+---
+
+# Testes
+
+## Stack e comandos
+
+| Comando | O que faz |
+|---|---|
+| `npm run test` | Vitest em modo watch |
+| `npm run test:run` | Roda a suíte uma vez (use na verificação) |
+| `npm run test:coverage` | Cobertura de `src/**` |
+
+Vitest 4 + React Testing Library em ambiente `jsdom`. Config em `vitest.config.mts` (resolução do alias `@/` via `resolve.tsconfigPaths`), matchers do `jest-dom` e `cleanup` em `vitest.setup.ts`.
+
+## Onde os testes ficam
+
+Em `__tests__/`, na raiz, espelhando `src/` — **nunca** dentro de `src/app/`, para não misturar com o App Router. Só arquivos `__tests__/**/*.test.ts(x)` são coletados.
+
+## Mocks obrigatórios
+
+Mocks reaproveitáveis ficam em `__tests__/helpers/` e entram pelo padrão `vi.mock(path, () => import(helper))`:
+
+```tsx
+vi.mock("@/firebase/config", () => import("../../helpers/firebaseConfigMock"));
+vi.mock("firebase/auth", () => import("../../helpers/firebaseAuthMock"));
+vi.mock("js-cookie", () => import("../../helpers/jsCookieMock"));
+vi.mock("next/navigation", () => import("../../helpers/nextNavigationMock"));
+```
+
+- `@/firebase/config` — obrigatório em qualquer teste que importe `AuthContext`: o módulo real chama `initializeApp` na importação e quebra sem `.env`
+- Componentes consomem auth/tema por hook, então mocke `@/data/hook/useAuth` (`useAuthMock`) e `@/data/hook/useAppData` (`useAppDataMock`) em vez do provider inteiro
+- Estado dos hooks mockados: `setAuthState`/`resetAuthState` e `setTheme`/`resetTheme`, sempre resetando no `beforeEach`
+
+## Armadilhas deste projeto
+
+- `ForceAuth` recebe o JSX como argumento (`ForceAuth(jsx)`), não como props — chame dentro de um componente sonda para o React executar os hooks
+- `AuthInput` não liga `<label>` ao `<input>`; `getByLabelText` não funciona. Use `getByRole("textbox")` para o email e `input[type="password"]` para as senhas
+- Com `vi.useFakeTimers()`, use `fireEvent` — o `userEvent` precisa de timers reais e trava

@@ -22,17 +22,21 @@ Template de painel administrativo (projeto de curso). App Router, autenticação
 | React | 19.2.4 |
 | Tailwind CSS | v4 via `@tailwindcss/postcss` (sem `tailwind.config`) |
 | Firebase | 12.x, apenas `firebase/app` + `firebase/auth` |
+| Testes | Vitest 4 + React Testing Library, ambiente `jsdom` |
 | Outros | `js-cookie`, TypeScript 5, ESLint 9 (`eslint-config-next`) |
 
 ## Comandos
 
 ```bash
-npm run dev     # apenas UM por projeto — Next 16 bloqueia o segundo com "Another next dev server is already running"
+npm run dev            # apenas UM por projeto — Next 16 bloqueia o segundo com "Another next dev server is already running"
 npm run build
-npm run lint    # o script é só `eslint`, sem argumentos
+npm run lint           # o script é só `eslint`, sem argumentos
+npm run test           # Vitest em watch
+npm run test:run       # roda a suíte uma vez
+npm run test:coverage  # cobertura de src/**
 ```
 
-Não há testes configurados. Verificação de uma mudança = `npm run lint` + `npm run build`.
+Verificação de uma mudança = `npm run test:run` + `npm run lint` + `npm run build`.
 
 Antes de subir um dev server, confira os terminais existentes. Para matar um travado: `taskkill /PID <pid> /F` (Windows/PowerShell).
 
@@ -50,7 +54,6 @@ src/
   components/
     template/Layout.tsx         # ForceAuth + SideMenu + Header + Content; props: title, subtitle, children
     template/                   # Header, SideMenu, ItemMenu, Content, Title, Logo, UserAvatar, ButtonChangeTheme
-    auth/ForceAuth.tsx          # guarda de rota no client; redireciona para /authentication
     auth/AuthInput.tsx          # input do formulário de login
     icons/index.tsx             # todos os ícones SVG, exportados nomeados
   data/
@@ -59,8 +62,10 @@ src/
     hook/useAuth.ts             # useContext(AuthContext)
     hook/useAppData.ts          # useContext(appContext)
   firebase/config.js            # initializeApp + getAuth (único lugar que fala com o SDK)
+  functions/ForceAuth.tsx       # guarda de rota no client; redireciona para /authentication
   model/User.ts                 # tipo de domínio
   styles/globals.css            # Tailwind v4, tokens de tema, variante `dark`
+__tests__/                      # Vitest + RTL, espelha src/; mocks em __tests__/helpers/
 ```
 
 Config na raiz: `next.config.ts` define `turbopack.root` (há `package-lock.json` na pasta pai, senão o Turbopack erra a raiz) e `images.remotePatterns` para `lh3.googleusercontent.com` e `picsum.photos`.
@@ -108,4 +113,5 @@ Leia o guia correspondente em `node_modules/next/dist/docs/` — não confie na 
 - `.cursor/rules/auth.mdc` — detalhes de sessão e proteção de rotas
 - `.cursor/rules/dev-workflow.mdc` — dev server, Turbopack e tabela de diagnóstico
 - `.cursor/rules/styling.mdc` — Tailwind v4 e dark mode
+- `.cursor/rules/testing.mdc` — onde os testes ficam, mocks obrigatórios e armadilhas
 - `docs/lessons-learned.md` — erros já enfrentados neste projeto e como foram resolvidos

@@ -20,7 +20,7 @@ Em `src/app/layout.tsx`, `AuthProvider` envolve `AppProvider`. O root layout per
 ## Proteção de rotas
 
 - **Não há middleware** — proteção só no client
-- `ForceAuth` (`src/components/auth/ForceAuth.tsx`) dentro de `Layout` redireciona para `/authentication` se não houver usuário
+- `ForceAuth` (`src/functions/ForceAuth.tsx`) dentro de `Layout` redireciona para `/authentication` se não houver usuário
 - Páginas admin usam `Layout`; `/authentication` **não** usa `Layout`
 
 ## Consumo

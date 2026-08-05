@@ -1,7 +1,7 @@
 import { IconMoon, IconSun } from "../icons";
 
 interface ButtonChangeThemeProps {
-  theme: string;
+  theme?: string;
   changeTheme: () => void;
 }
 
