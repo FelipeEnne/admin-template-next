@@ -4,7 +4,7 @@ import SideMenu from "./SideMenu";
 import Header from "./Header";
 import Content from "./Content";
 import useAppData from "@/data/hook/useAppData";
-import ForceAuth from "../auth/ForceAuth";
+import ForceAuth from "@/functions/ForceAuth";
 
 interface LayoutProps {
   title: string;
@@ -15,17 +15,13 @@ interface LayoutProps {
 export default function Layout({ title, subtitle, children }: LayoutProps) {
   const { thema } = useAppData();
 
-  return (
-    <ForceAuth>
-      <div className={`${thema} flex h-screen w-screen`}>
-        <SideMenu />
-        <div
-          className={`flex flex-col p-7 w-full bg-gray-300 dark:bg-gray-800 `}
-        >
-          <Header title={title} subtitle={subtitle} />
-          <Content>{children}</Content>
-        </div>
+  return ForceAuth(
+    <div className={`${thema} flex h-screen w-screen`}>
+      <SideMenu />
+      <div className={`flex flex-col p-7 w-full bg-gray-300 dark:bg-gray-800 `}>
+        <Header title={title} subtitle={subtitle} />
+        <Content>{children}</Content>
       </div>
-    </ForceAuth>
+    </div>,
   );
 }

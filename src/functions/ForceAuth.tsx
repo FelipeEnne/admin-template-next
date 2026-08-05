@@ -2,7 +2,7 @@ import useAuth from "@/data/hook/useAuth";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 
-export default function ForceAuth({ children }: { children: React.ReactNode }) {
+export default function ForceAuth(jsx: React.ReactNode) {
   const { user, loading } = useAuth();
   const router = useRouter();
   function renderContent() {
@@ -19,7 +19,7 @@ export default function ForceAuth({ children }: { children: React.ReactNode }) {
             }}
           ></script>
         </Head>
-        {children}
+        {jsx}
       </>
     );
   }
